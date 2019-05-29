@@ -46,6 +46,44 @@ def create_test_users():
     db_session.commit()
     return "Test user created!"
 
+
+
+@app.route('/users', methods = ['POST'])
+def create_user():
+    c =  json.loads(request.form['values'])
+    user = entities.User(
+        username=c['username'],
+        name=c['name'],
+        fullname=c['fullname'],
+        password=c['password']
+    )
+    session = db.getSession(engine)
+    session.add(user)
+    session.commit()
+    return 'Created User'
+
+@app.route('/users', methods = ['DELETE'])
+def delete_user():
+    id = request.form['key']
+    session = db.getSession(engine)
+    user = session.query(entities.User).filter(entities.User.id == id)
+    for key in user:
+        session.delete(key)
+    session.commit()
+    return "Deleted User"
+
+@app.route('/users', methods = ['PUT'])
+def update_user():
+    session = db.getSession(engine)
+    id = request.form['key']
+    user = session.query(entities.User).filter(entities.User.id == id).first()
+    c =  json.loads(request.form['values'])
+    for key in c.keys():
+        setattr(user, key, c[key])
+    session.add(user)
+    session.commit()
+    return 'Updated User'
+
 if __name__ == '__main__':
     app.secret_key = ".."
     app.run(port=8080, threaded=True, host=('127.0.0.1'))
