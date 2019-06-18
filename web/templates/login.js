@@ -26,7 +26,12 @@ function getData(){
                 }else{
                     $('#Loading').hide();
                     $('#Success').show()
+                    Redirect()
                 }
             }
         });
     }
+
+function Redirect() {
+        window.location.assign("Chat.html");
+}
